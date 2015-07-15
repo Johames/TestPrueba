@@ -1,0 +1,21 @@
+body {
+    margin: 100px auto;
+    text-align: center;
+    width: 400px;
+}
+h1 {
+    margin-bottom: 30px;
+}
+strong, img {
+    display: block;
+}
+text1, text2, text3, text4, text5 {
+    display: block;
+}
+img {
+    margin: 0 auto;
+    border-radius: 10px;
+}
+#logout, #invitar {
+    margin-top: 10px;
+}
