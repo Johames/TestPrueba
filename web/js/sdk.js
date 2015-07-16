@@ -11,12 +11,9 @@ $(function () {
             "<text2></text2>" +
             "<text3></text3>" +
             "<text4></text4>" +
-            "<text5></text5>" +
-            "<text21></text21>" +
             "<img>" +
             "<a href='#' id='logout' class='btn btn-danger'>Cerrar sesión</a>" +
-            "<a href='#' id='invitar' class='btn btn-primary'>Invitar Amigos</a><br><br>" +
-            "<a href='javascript:enviar()' id='enviar' class='btn btn-primary'>Enviar</a>" +
+            "<a href='#' id='invitar' class='btn btn-primary'>Invitar Amigos</a>" +
             "</div>";
 
     window.fbAsyncInit = function () {
@@ -37,12 +34,17 @@ $(function () {
     };
 
     var statusChangeCallback = function (response, callback) {
+        console.log('statusChangeCallback');
         console.log(response);
 
         if (response.status === 'connected') {
             getFacebookData();
+        } else if (response.status === 'not_authorized') {
+            document.getElementById('status').innerHTML = 'Please log ' +
+                    'into this app.';
         } else {
-            callback(false);
+            document.getElementById('status').innerHTML = 'Please log ' +
+                    'into Facebook.';
         }
     }
 
@@ -53,15 +55,14 @@ $(function () {
     }
 
     var getFacebookData = function () {
-            FB.api('/me', function (response) {
+        FB.api('/me', {fields: 'name, gender, age_range, phone, email'}, function (response) {
             $('#login').after(div_session);
             $('#login').remove();
             $('#facebook-session strong').text("Bienvenido: " + response.name);
             $('#facebook-session text1').text("Id: " + response.id);
             $('#facebook-session text2').text("Email: " + response.email);
-            $('#facebook-session text3').text("Nombres: " + response.first_name);
-            $('#facebook-session text4').text("Apellidos: " + response.last_name);
-            $('#facebook-session text5').text("Edad: " + response.age_range);
+            $('#facebook-session text3').text("Genero: " + response.gender);
+            $('#facebook-session text4').text("Teléfono: " + response.phone);
             $('#facebook-session img').attr('src', 'http://graph.facebook.com/' + response.id + '/picture?type=large');
         })
     }
@@ -89,12 +90,8 @@ $(function () {
 
     }
 
-    var enviar = function() {
-        document.formulario1.submit()
-    }
-
     var renderMFS = function () {
-        FB.api('/user_friends', function (response) {
+        FB.api('/me', {fields: 'user_friends'}, function (response) {
             var container = document.getElementById('mfs');
             var mfsForm = document.createElement('form');
             mfsForm.id = 'mfsForm';
@@ -156,12 +153,6 @@ $(function () {
         e.preventDefault();
 
         renderMFS();
-    })
-    
-    $(document).on('click', '#enviar', function (e) {
-        e.preventDefault();
-
-        enviar();
     })
 
 })
